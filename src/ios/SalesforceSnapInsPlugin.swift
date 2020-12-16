@@ -117,6 +117,9 @@ func hexStringToUIColor(_ hex: String) -> UIColor {
                                                         deploymentId: deploymentId,
                                                         buttonId: buttonId)
 
+
+        self.liveAgentChatConfig?.allowMinimization = false
+
         return nil
     }
 
@@ -193,6 +196,7 @@ func hexStringToUIColor(_ hex: String) -> UIColor {
         let keyboardType = field["keyboardType"] as? Int ?? 0
         let autocorrectionType = field["autocorrectionType"] as? Int ?? 0
         let values = field["values"] as? [Dictionary<String, Any>]
+        let initialValue = field["initialValue"] as? String ?? nil
 
         switch type {
         case "text":
@@ -200,6 +204,7 @@ func hexStringToUIColor(_ hex: String) -> UIColor {
             newTextField.isRequired = isRequired
             newTextField.keyboardType = UIKeyboardType(rawValue: keyboardType)!
             newTextField.autocorrectionType = UITextAutocorrectionType(rawValue: autocorrectionType)!
+            newTextField.initialValue = initialValue
             if transcriptField != nil {
                 newTextField.transcriptFields.add(transcriptField!)
             }
