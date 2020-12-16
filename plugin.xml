@@ -10,7 +10,7 @@
 
 	<engines>
 		<engine name="cordova" version=">=7.1.0" />
-		<engine name="cordova-android" version=">=7.0.0" />
+		<!--engine name="cordova-android" version=">=7.0.0" /-->
 		<engine name="cordova-ios" version=">=4.5.0" />
 	</engines>
 
@@ -18,7 +18,7 @@
 		<clobbers target="cordova.plugins.SalesforceSnapIns"/>
 	</js-module>
 
-	<platform name="android">
+	<!--platform name="android">
 		<dependency id="cordova-plugin-android-fragmentactivity" version="~2.2.1" />
 
 		<config-file parent="/*" target="res/xml/config.xml">
@@ -35,10 +35,10 @@
 		</config-file>
 
 		<source-file src="src/android/SalesforceSnapInsPlugin.java" target-dir="src/org/apache/cordova/salesforce" />
-		<!-- <source-file src="src/android/colors.xml" target-dir="src/res/values" /> -->
+		<source-file src="src/android/colors.xml" target-dir="src/res/values" />
 
 		<framework src="src/android/build.gradle" custom="true" type="gradleReference" />
-	</platform>
+	</platform-->
 
 	<platform name="ios">
 		<!--dependency id="cordova-plugin-add-swift-support" version="~2.0.2" /-->
