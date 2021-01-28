@@ -32,6 +32,20 @@ func hexStringToUIColor(_ hex: String) -> UIColor {
     )
 }
 
+extension UIImageView {
+    func load(url: URL) {
+        DispatchQueue.global().async { [weak self] in
+            if let data = try? Data(contentsOf: url) {
+                if let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self?.image = image
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @objc(SalesforceSnapInsPlugin) class SalesforceSnapInsPlugin: CDVPlugin, UNUserNotificationCenterDelegate, SCSChatSessionDelegate {
 
@@ -118,6 +132,7 @@ func hexStringToUIColor(_ hex: String) -> UIColor {
                                                         buttonId: buttonId)
 
 
+        self.liveAgentChatConfig?.queueStyle = .none
         self.liveAgentChatConfig?.allowMinimization = false
 
         return nil
@@ -164,6 +179,7 @@ func hexStringToUIColor(_ hex: String) -> UIColor {
 
     func initializeColors(_ colors: Dictionary<String, String>) -> String? {
         let appearance = SCAppearanceConfiguration()
+        
         colors.forEach { (arg) in
             let (aColorName, aHexString) = arg
             self.setAppearanceColor(appearance, color: hexStringToUIColor(aHexString), forName: aColorName)
@@ -197,6 +213,7 @@ func hexStringToUIColor(_ hex: String) -> UIColor {
         let autocorrectionType = field["autocorrectionType"] as? Int ?? 0
         let values = field["values"] as? [Dictionary<String, Any>]
         let initialValue = field["initialValue"] as? String ?? nil
+        let displayToAgent = true
 
         switch type {
         case "text":
@@ -205,12 +222,14 @@ func hexStringToUIColor(_ hex: String) -> UIColor {
             newTextField.keyboardType = UIKeyboardType(rawValue: keyboardType)!
             newTextField.autocorrectionType = UITextAutocorrectionType(rawValue: autocorrectionType)!
             newTextField.initialValue = initialValue
+            newTextField.displayToAgent = displayToAgent
             if transcriptField != nil {
                 newTextField.transcriptFields.add(transcriptField!)
             }
             config.prechatFields.append(newTextField)
         case "hidden":
             let newHiddenField = SCSPrechatObject(label: label, value: value)
+            newHiddenField.displayToAgent = displayToAgent
             if transcriptField != nil {
                 newHiddenField.transcriptFields.add(transcriptField!)
             }
@@ -309,6 +328,7 @@ func hexStringToUIColor(_ hex: String) -> UIColor {
         let chat = ServiceCloud.shared().chatCore!
         let config = self.liveAgentChatConfig!
         let commandDelegate = self.commandDelegate!
+        
         chat.determineAvailability(with: config, completion: { (error: Error?, available: Bool, timeInterval: TimeInterval) in
             var result: CDVPluginResult
             if (error != nil) {
